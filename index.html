@@ -1,0 +1,26 @@
+<html>
+  <head></head>
+  <body>
+    <ul id="feeds_list"></ul>
+  </body>
+  <script>
+    const ul = document.getElementById("feeds_list");
+
+    const data = fetch("http://localhost:8000/")
+      .then((data) => {
+        return data.json();
+      })
+      .then((res) => {
+        console.log(res);
+        res.forEach((element) => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          console.log(element);
+          a.appendChild(document.createTextNode(element.title));
+          a.href = element.link;
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+  </script>
+</html>
