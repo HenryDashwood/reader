@@ -1,14 +1,17 @@
-import requests
-import pandas as pd
 from datetime import datetime
+from pathlib import Path
+
+import pandas as pd
+import requests
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
-from requests_html import HTML
 from requests_html import HTMLSession
 from typer import Typer
 
 app = Typer()
+
+PARENT_DIR = Path(__file__).parent.resolve()
 
 
 def get_source(url):
@@ -57,7 +60,7 @@ def get_feed(url):
 def get_articles_since(days: int = 1) -> None:
     cutoff = (datetime.now() - relativedelta(days=days)).replace(tzinfo=tzutc())
     df = pd.DataFrame(columns=["title", "pubDate", "link"])
-    with open("feeds.txt") as f:
+    with open(f"{PARENT_DIR}/feeds.txt") as f:
         for line in f:
             print(line.strip())
             try:
@@ -68,7 +71,7 @@ def get_articles_since(days: int = 1) -> None:
     df["norm_date"] = df["pubDate"].apply(lambda x: parser.parse(x))
     df = df.sort_values(by="norm_date", ascending=False)
     df = df[df["norm_date"].apply(lambda x: x > cutoff)]
-    df.to_csv("latest.csv", index=False)
+    df.to_csv(f"{PARENT_DIR}/latest.csv", index=False)
 
 
 if __name__ == "__main__":
