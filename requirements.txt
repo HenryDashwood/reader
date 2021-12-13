@@ -1,0 +1,7 @@
+dateutil
+fastapi
+pandas
+requests
+requests_html
+typer
+uvicorn

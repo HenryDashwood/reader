@@ -9,3 +9,15 @@ You can add, edit, and delete cron jobs by running `crontab -e`. On MacOS you mi
 ```
 
 This means the `feeds.py` script will run every hour and write any links from the last day to `latest.csv`
+
+We run the the backend from the top level of the repo this:
+
+```zsh
+uvicorn src.main:app --reload
+```
+
+## TODO
+
+- Copy website files to new machine
+- Set up cron job on machine
+- See if it works
