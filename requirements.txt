@@ -1,6 +1,6 @@
-dateutil
 fastapi
 pandas
+python-dateutil
 requests
 requests_html
 typer

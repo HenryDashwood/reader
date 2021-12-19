@@ -12,12 +12,13 @@ PARENT_DIR = Path(__file__).parent.parent.resolve()
 app = FastAPI()
 
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"]
 )
+
+
+@app.get("/ping")
+def ping():
+    return {"ping": "pong"}
 
 
 @app.get("/")
