@@ -27,3 +27,4 @@ http://slatestarcodex.com/feed/
 https://analog-antiquarian.net/feed/
 http://scholars-stage.blogspot.com/feeds/posts/default
 https://worksinprogress.co/feed/
+https://www.getrevue.co/profile/mattclifford?format=rss

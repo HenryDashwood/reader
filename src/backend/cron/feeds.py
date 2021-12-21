@@ -12,7 +12,7 @@ from typer import Typer
 
 app = Typer()
 
-PARENT_DIR = Path(__file__).parent.parent.parent.resolve()
+PARENT_DIR = Path(__file__).parent.parent.parent.parent.resolve()
 
 
 def get_source(url):
