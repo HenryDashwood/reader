@@ -74,6 +74,11 @@ def get_articles_since(days: int = 1) -> None:
     df = df[df["norm_date"].apply(lambda x: x > cutoff)]
     df.to_csv(f"{PARENT_DIR}/data/latest.csv", index=False)
 
+    with open(f"{PARENT_DIR}/data/updates.txt", "a+") as f:
+        now = datetime.now()
+        current_time = now.strftime("%m/%d/%Y:%H:%M:%S")
+        f.write(f"{current_time}\n")
+
 
 if __name__ == "__main__":
     app()

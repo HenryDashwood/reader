@@ -2,12 +2,14 @@
   <head></head>
   <body>
     <h1>RSS Reader</h1>
+    <p id="last_update"></p>
     <ul id="feeds_list"></ul>
   </body>
   <script>
+    const BACKEND_URL = "http://api.reader.henrydashwood.com/";
+    // const BACKEND_URL = "http://localhost:8000/";
     const ul = document.getElementById("feeds_list");
-
-    const data = fetch("http://api.reader.henrydashwood.com/", {
+    const data = fetch(BACKEND_URL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +21,7 @@
         return data.json();
       })
       .then((res) => {
-        res.forEach((element) => {
+        res["data"].forEach((element) => {
           const li = document.createElement("li");
           const a = document.createElement("a");
           a.appendChild(document.createTextNode(element.title));
@@ -28,6 +30,8 @@
           li.appendChild(a);
           ul.appendChild(li);
         });
+        let last_update = document.getElementById("last_update");
+        last_update.innerText = `Last updated: ${res["last_update"]}`;
       });
   </script>
 </html>

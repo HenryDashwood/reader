@@ -3,3 +3,5 @@
 **/*.xml
 **/*.csv
 **/*.json
+
+data/updates.txt
