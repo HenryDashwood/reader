@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -34,6 +35,33 @@ def get_source(url):
         print(e)
 
 
+def get_substack_feed(url):
+    """Return a Pandas dataframe containing the Substack RSS feed contents.
+
+    Args:
+        url (string): URL of the RSS feed to read.
+
+    Returns:
+        df (dataframe): Pandas dataframe containing the RSS feed contents.
+    """
+
+    resp = get_source(url)
+    source = resp.html.find("title")[1].text
+    df = pd.DataFrame(columns=["source", "title", "pubDate", "link"])
+
+    title_pattern = re.compile("<title>(.*?)</title>")
+    titles = title_pattern.findall(str(resp.html.html))
+    titles = [t.replace("<![CDATA[", "").replace("]]>", "") for t in titles]
+
+    items = resp.html.find("item", first=False)
+    for title, item in zip(titles[2:], items):
+        pubDate = item.find("pubDate", first=True).text
+        link = item.find("link", first=True).html.replace("<link/>", "").replace("&#13;", "")
+        row = {"source": source, "title": title, "pubDate": pubDate, "link": link}
+        df = df.append(row, ignore_index=True)
+    return df
+
+
 def get_feed(url):
     """Return a Pandas dataframe containing the RSS feed contents.
 
@@ -45,14 +73,15 @@ def get_feed(url):
     """
 
     response = get_source(url)
-    df = pd.DataFrame(columns=["title", "pubDate", "link"])
+    df = pd.DataFrame(columns=["source", "title", "pubDate", "link"])
     with response as r:
+        source = r.html.find("title", first=True).text
         items = r.html.find("item", first=False)
         for item in items:
             title = item.find("title", first=True).text
             pubDate = item.find("pubDate", first=True).text
             link = item.find("link", first=True).html.replace("<link/>", "").replace("&#13;", "")
-            row = {"title": title, "pubDate": pubDate, "link": link}
+            row = {"source": source, "title": title, "pubDate": pubDate, "link": link}
             df = df.append(row, ignore_index=True)
     return df
 
@@ -66,6 +95,13 @@ def get_articles_since(days: int = 1) -> None:
             print(line.strip())
             try:
                 df = df.append(get_feed(line.strip()))
+            except Exception as e:
+                print(e)
+    with open(f"{PARENT_DIR}/data/substacks.txt") as f:
+        for line in f:
+            print(line.strip())
+            try:
+                df = df.append(get_substack_feed(line.strip()))
             except Exception as e:
                 print(e)
 

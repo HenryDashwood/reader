@@ -31,11 +31,12 @@ def get_data():
 
 def get_last_update():
     try:
-        with open(f"data/updates.txt", "r") as f:
+        with open(f"{PARENT_DIR}/data/updates.txt", "r") as f:
             lines = f.read().splitlines()
             last_line = lines[-1]
             return last_line
     except Exception as e:
+        print(e)
         return "undefined"
 
 
