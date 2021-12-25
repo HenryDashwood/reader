@@ -1,5 +1,7 @@
 <html>
-  <head></head>
+  <head>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
   <body>
     <h1>RSS Reader</h1>
     <p id="last_update"></p>
@@ -24,6 +26,7 @@
         res["data"].forEach((element) => {
           const li = document.createElement("li");
           const row = document.createElement("div");
+          row.classList.add("row");
           const source = document.createElement("p");
           source.appendChild(document.createTextNode(element.source));
           row.appendChild(source);
