@@ -24,3 +24,4 @@ https://wayofthedodo.substack.com/feed
 https://duncanweldon.substack.com/feed
 https://samdumitriu.substack.com/feed
 https://edwest.substack.com/feed
+https://fullstackeconomics.com/rss/
