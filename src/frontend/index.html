@@ -7,39 +7,5 @@
     <p id="last_update"></p>
     <ul id="feeds_list"></ul>
   </body>
-  <script>
-    const BACKEND_URL = "http://api.reader.henrydashwood.com/";
-    // const BACKEND_URL = "http://localhost:8000/";
-    const ul = document.getElementById("feeds_list");
-    const data = fetch(BACKEND_URL, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      mode: "cors",
-    })
-      .then((data) => {
-        return data.json();
-      })
-      .then((res) => {
-        res["data"].forEach((element) => {
-          const li = document.createElement("li");
-          const row = document.createElement("div");
-          row.classList.add("row");
-          const source = document.createElement("p");
-          source.appendChild(document.createTextNode(element.source));
-          row.appendChild(source);
-          const a = document.createElement("a");
-          a.appendChild(document.createTextNode(element.title));
-          a.href = element.link;
-          a.setAttribute("target", "_blank");
-          row.appendChild(a);
-          li.appendChild(row);
-          ul.appendChild(li);
-        });
-        let last_update = document.getElementById("last_update");
-        last_update.innerText = `Last updated: ${res["last_update"]}`;
-      });
-  </script>
+  <script src="./index.js"></script>
 </html>
