@@ -1,13 +1,11 @@
-from asyncore import read
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 import pandas as pd
 from fastapi import HTTPException
-from sqlmodel import Field, Session, SQLModel, create_engine, select, or_, col
+from sqlmodel import Session, SQLModel, create_engine, select
 
-from src.backend.models.SQLmodel import Article, ArticleUpdate, Update
-from src.backend.api import articles, updates
+from .SQLmodel import Article, ArticleUpdate, Update
 
 
 PARENT_DIR = Path(__file__).parent.parent.parent.parent.resolve()
@@ -32,27 +30,30 @@ def populate_articles_table_from_file():
 def populate_updates_table_from_file():
     with open(f"{PARENT_DIR}/data/updates.txt") as f:
         for line in f:
-            updates.create_update(engine, timestamp=line.strip())
+            insert_update(engine, timestamp=line.strip())
 
 
 def init_db():
     create_db_and_tables()
-    populate_articles_table_from_file()
-    populate_updates_table_from_file()
+    # populate_articles_table_from_file()
+    # populate_updates_table_from_file()
 
 
 def select_all_articles() -> List:
     with Session(engine) as session:
-        statement = select(Article)
+        statement = select(Article).order_by(Article.published_date.desc())
         results = session.exec(statement)
         return results.all()
 
 
 def insert_article(title: str, url: str, source: str, published_date: str, read: bool = False):
-    article = Article(title=title, url=url, source=source, published_date=published_date, read=read)
-    with Session(engine) as session:
-        session.add(article)
-        session.commit()
+    try:
+        article = Article(title=title, url=url, source=source, published_date=published_date, read=read)
+        with Session(engine) as session:
+            session.add(article)
+            session.commit()
+    except Exception as e:
+        print(e)
 
 
 def update_article(id: int, article: ArticleUpdate):
@@ -80,9 +81,18 @@ def select_last_update() -> str:
     with Session(engine) as session:
         statement = select(Update).order_by(Update.timestamp.desc())
         results = session.exec(statement)
-        latest_timestamp = results.first().timestamp
-        return latest_timestamp
+        first_result = results.first()
+        if first_result:
+            return first_result.timestamp
+        else:
+            return "Never"
 
 
-if __name__ == "__main__":
-    init_db()
+def insert_update(current_time: str) -> None:
+    try:
+        update = Update(timestamp=current_time)
+        with Session(engine) as session:
+            session.add(update)
+            session.commit()
+    except Exception as e:
+        print(e)

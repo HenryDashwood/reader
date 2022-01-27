@@ -1,10 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Path
-from sqlmodel import Session, select
+from fastapi import APIRouter
 
 from src.backend.db import db
-from src.backend.models.SQLmodel import Update
+from src.backend.db.SQLmodel import Update
 
 
 router = APIRouter()
@@ -20,8 +19,5 @@ def get_last_update() -> str:
     return db.select_last_update()
 
 
-def create_update(engine, timestamp: str):
-    article = Update(timestamp=timestamp)
-    with Session(engine) as session:
-        session.add(article)
-        session.commit()
+def create_update(timestamp: str):
+    db.insert_update(timestamp)

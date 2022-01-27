@@ -5,7 +5,7 @@ from sqlmodel import Field, SQLModel
 
 class ArticleBase(SQLModel):
     title: str = Field(nullable=False)
-    url: str = Field(nullable=False)
+    url: str = Field(nullable=False, sa_column_kwargs={"unique": True})
     source: str = Field(nullable=False)
     published_date: str = Field(nullable=False)
     read: bool = Field(default=False, nullable=False)
@@ -33,4 +33,4 @@ class ArticleUpdate(SQLModel):
 
 class Update(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    timestamp: str = Field(nullable=False)
+    timestamp: str = Field(nullable=False, sa_column_kwargs={"unique": True})

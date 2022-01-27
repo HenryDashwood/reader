@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
-from src.backend.config import get_settings, Settings
+
+from src.backend.config import Settings, get_settings
+
 
 router = APIRouter()
 
