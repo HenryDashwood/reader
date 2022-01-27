@@ -3,5 +3,6 @@ pandas
 python-dateutil
 requests
 requests_html
+sqlmodel
 typer
 uvicorn

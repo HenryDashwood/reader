@@ -36,7 +36,7 @@ You can add, edit, and delete cron jobs by running `sudo crontab -e`. On MacOS y
 To debug on MacOS, run
 
 ```
-* */1 * * * /Users/henrydashwood/.pyenv/versions/py395/bin/python /Users/henrydashwood/Documents/reader/src/backend/cron/feeds.py
+* */1 * * * /Users/henrydashwood/.pyenv/versions/py395/bin/python /Users/henrydashwood/Documents/reader/src/feeds_cron.py
 ```
 
 This means the `feeds.py` script will run every hour and write any links from the last day to `latest.csv`. The MacOS one is set to run every minute for quick debugging.
