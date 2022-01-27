@@ -1,6 +1,7 @@
 **/__pycache__
 **/.ipynb_checkpoints
 **/.cache
+**/.parcel-cache
 **/dist
 **/node_modules
 **/package-lock.json
