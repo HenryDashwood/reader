@@ -30,7 +30,7 @@ You may then need to restart Apache by running `sudo systemctl restart apache2`
 You can add, edit, and delete cron jobs by running `sudo crontab -e`. On MacOS you might need to update cron's disk access permissions. [See here for how](https://dccxi.com/posts/crontab-not-working-catalina/). For a useful tool for cron job syntax, [see here](https://crontab.guru). The cronjob on the webserver looks like this:
 
 ```
-0 * * * * /home/ubuntu/.pyenv/versions/py399/bin/python /home/ubuntu/reader/src/backend/cron/feeds.py
+0 * * * * /home/ubuntu/.pyenv/versions/py399/bin/python /home/ubuntu/reader/src/feeds_cron.py
 ```
 
 To debug on MacOS, run
@@ -50,7 +50,3 @@ cd ~/reader && uvicorn src.backend.main:app &
 The `&` makes it a background process.
 
 To run the frontend `cd` into the `./src/frontend` folder. Run `npm install` if you need and then `npm start`.
-
-## TODO
-
-Cron job needs to add articles to the database
