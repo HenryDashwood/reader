@@ -48,3 +48,9 @@ cd ~/reader && uvicorn src.backend.main:app &
 ```
 
 The `&` makes it a background process.
+
+To run the frontend `cd` into the `./src/frontend` folder. Run `npm install` if you need and then `npm start`.
+
+## TODO
+
+Cron job needs to add articles to the database

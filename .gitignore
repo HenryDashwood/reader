@@ -1,9 +1,15 @@
 **/__pycache__
 **/.ipynb_checkpoints
+**/.cache
 **/dist
+**/node_modules
+**/package-lock.json
 **/*.xml
 **/*.csv
 **/*.json
+**/*.db
 
 data/updates.txt
+
+!**/package.json
 

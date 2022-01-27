@@ -20,7 +20,11 @@ ul {
   padding-bottom: 1rem;
 }
 
-.row > p {
+.row > * {
   display: inline;
   padding-right: 1rem;
+}
+
+.row > .published_date {
+  display: none;
 }
