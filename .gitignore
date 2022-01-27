@@ -10,6 +10,7 @@
 **/*.csv
 **/*.json
 **/*.db
+**/*.db-journal
 
 data/updates.txt
 
