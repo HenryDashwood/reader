@@ -11,6 +11,8 @@
 **/*.json
 **/*.db
 **/*.db-journal
+**/*.pem
+**/.env
 
 data/updates.txt
 

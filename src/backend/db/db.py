@@ -5,7 +5,7 @@ import pandas as pd
 from fastapi import HTTPException
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from .SQLmodel import Article, ArticleUpdate, Update
+from .SQLmodel import Article, ArticleUpdate, Update, User
 
 
 PARENT_DIR = Path(__file__).parent.parent.parent.parent.resolve()
@@ -96,3 +96,10 @@ def insert_update(current_time: str) -> None:
             session.commit()
     except Exception as e:
         print(e)
+
+
+def select_all_users() -> List:
+    with Session(engine) as session:
+        statement = select(User)
+        results = session.exec(statement)
+        return results.all()

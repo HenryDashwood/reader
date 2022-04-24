@@ -1,10 +1,12 @@
-const BACKEND_URL = "https://api.reader.henrydashwood.com/";
-// const BACKEND_URL = "http://localhost:8000";
+// const BACKEND_URL = "https://api.reader.henrydashwood.com";
+const BACKEND_URL = "https://localhost:8000";
 const ul = document.getElementById("feeds_list");
 
 const getData = async () => {
   const resp = await fetch(`${BACKEND_URL}/articles`);
+  console.log("here");
   const json = await resp.json();
+  console.log(json);
   return json;
 };
 
