@@ -12,10 +12,11 @@ from pydantic import BaseModel
 from src.backend.db import db
 from src.backend.db.SQLmodel import User
 
+
 router = APIRouter()
 
-PARENT_DIR = Path(__file__).parent.parent.parent.parent.resolve()
-load_dotenv(dotenv_path=PARENT_DIR / ".env")
+PROJECT_FOLDER = Path(__file__).parent.parent.parent.parent.resolve()
+load_dotenv(dotenv_path=PROJECT_FOLDER / ".env")
 
 # to get a string like this run openssl rand -hex 32
 SECRET_KEY = os.getenv("secret_key")

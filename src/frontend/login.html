@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <script defer src="js/login.js"></script>
+  </head>
+  <body class="login">
+    <div class="container">
+      <h2 class="text-center">Login</h2>
+      <br />
+      <form action="index.html" method="post" id="loginForm">
+        <div class="error-message-all"></div>
+        <div class="input-group">
+          <label for="username" class="label">Username</label>
+          <input type="text" id="username" class="input" />
+          <span class="error-message"></span>
+        </div>
+        <br />
+        <div class="input-group">
+          <label for="password" class="label">Password</label>
+          <input type="password" id="password" class="input" />
+          <span class="error-message"></span>
+        </div>
+        <br />
+        <button type="submit" class="input">Login</button>
+      </form>
+    </div>
+  </body>
+</html>

@@ -5,9 +5,12 @@
       content="upgrade-insecure-requests"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <script defer src="js/auth.js"></script>
+    <script defer src="init.js"></script>
   </head>
   <body>
-    <h1>RSS Reader</h1>
+    <h1>RSS Reader - <span id="fullname"></span></h1>
+    <p class="text-center"><a href="#" class="logout">Log Out</a></p>
     <p id="last_update"></p>
     <ul id="feeds_list"></ul>
   </body>
