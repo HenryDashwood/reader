@@ -101,9 +101,4 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 @router.get("/me", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_user)):
-    return current_user
-
-
-@router.get("/me/items")
-async def read_own_items(current_user: User = Depends(get_current_user)):
-    return [{"item_id": "Foo", "owner": current_user.username}]
+    return {"username": current_user.username}

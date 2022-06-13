@@ -10,7 +10,7 @@
     <div class="container">
       <h2 class="text-center">Login</h2>
       <br />
-      <form action="index.html" method="post" id="loginForm">
+      <form method="post" id="loginForm">
         <div class="error-message-all"></div>
         <div class="input-group">
           <label for="username" class="label">Username</label>
@@ -24,7 +24,32 @@
           <span class="error-message"></span>
         </div>
         <br />
-        <button type="submit" class="input">Login</button>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+    <div class="container">
+      <h2 class="text-center">Create Account</h2>
+      <br />
+      <form method="post" id="createAccountForm">
+        <div class="error-message-all"></div>
+        <div class="input-group">
+          <label for="username" class="label">Username</label>
+          <input type="text" id="username" class="input" />
+          <span class="error-message"></span>
+        </div>
+        <br />
+        <div class="input-group">
+          <label for="password" class="label">Password</label>
+          <input type="password" id="password" class="input" />
+          <span class="error-message"></span>
+        </div>
+        <div class="input-group">
+          <label for="password-confirm" class="label">Confirm Password</label>
+          <input type="password-confirm" id="password-confirm" class="input" />
+          <span class="error-message"></span>
+        </div>
+        <br />
+        <input type="submit">Create Account</button>
       </form>
     </div>
   </body>

@@ -28,31 +28,17 @@ class Login {
         })
           .then((response) => response.json())
           .then((data) => {
-            if (data.error) {
-              console.error("Error:", data.message);
+            if (data.hasOwnProperty("access_token")) {
+              localStorage.setItem("token", `Bearer ${data["access_token"]}`);
+              localStorage.setItem("auth", 1);
+              window.location.replace("index.html");
+            } else {
               document.querySelector(".error-message-all").style.display =
                 "block";
               document.querySelector(".error-message-all").innerText =
                 "Incorrect username or password";
-            } else {
-              console.log(data);
-              fetch(`${BACKEND_URL}/users/me/items`, {
-                method: "GET",
-                headers: {
-                  accept: "application/json",
-                  Authorization: "Bearer " + data["access_token"],
-                },
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  console.log(data);
-                  localStorage.setItem("user", JSON.stringify(data));
-                  localStorage.setItem("auth", 1);
-                  this.form.submit();
-                });
             }
-          })
-          .catch((data) => console.error("Error:", data.message));
+          });
       }
     });
   }
@@ -102,8 +88,21 @@ class Login {
   }
 }
 
-const form = document.querySelector("#loginForm");
-if (form) {
+const loginForm = document.querySelector("#loginForm");
+if (loginForm) {
   const fields = ["username", "password"];
-  const validator = new Login(form, fields);
+  const validator = new Login(loginForm, fields);
 }
+
+const createAccount = (e) => {
+  e.preventDefault();
+  console.log("creating account...");
+  console.log(createAccountForm.elements);
+  console.log(createAccountForm.elements["username"].value);
+  console.log(createAccountForm.elements["password"].value);
+  console.log(createAccountForm.elements["password-confirm"].value);
+};
+
+const createAccountForm = document.forms.createAccountForm;
+
+createAccountForm.addEventListener("submit", createAccount);
