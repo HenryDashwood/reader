@@ -103,3 +103,13 @@ def select_all_users() -> List:
         statement = select(User)
         results = session.exec(statement)
         return results.all()
+
+
+def insert_user(username: str, hashed_password: str):
+    try:
+        user = User(email=username, hashed_password=hashed_password)
+        with Session(engine) as session:
+            session.add(user)
+            session.commit()
+    except Exception as e:
+        print(e)

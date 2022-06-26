@@ -1,4 +1,4 @@
-# reader
+# RSS Reader
 
 The bits of an RSS reader I actually want.
 
@@ -72,3 +72,30 @@ The `&` makes it a background process.
 ### Frontend
 
 To run the frontend `cd` into the `./src/frontend` folder. Run `npm install` if you need and then `npm start`.
+
+## TODO
+
+### Auth
+
+- When a user adds a feed, it gets added to a feeds table
+- User can have many feeds, feeds can be had by many useers
+- Cron job runs for all feeds and caches articles
+- When a user logs in, in just get articles with feeds for that user
+
+### Further auth
+
+- Password must match password confirm
+- Password must be decent
+- Reset password
+
+### Pagination
+
+Only show most recent feeds
+
+### User Functionality
+
+- User can delete their account
+- User can add feed by pasting url
+- User can remove feed from their feed
+
+### Payments

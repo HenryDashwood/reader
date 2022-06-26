@@ -1,9 +1,11 @@
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import List, Optional
+from urllib.request import Request
 
 from dotenv import load_dotenv
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -102,3 +104,17 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 @router.get("/me", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_user)):
     return {"username": current_user.username}
+
+
+@router.post("/register")
+async def register(username: str = Form(), password: str = Form()):
+    errors = []
+    if not username.__contains__("@"):
+        errors.append("Valid email required")
+    if len(password) < 6:
+        errors.append("Password too short")
+    if not errors:
+        hashed_password = get_password_hash(password)
+        db.insert_user(username=username, hashed_password=hashed_password)
+        return {"registered": "true"}
+    return {"errors": errors}
