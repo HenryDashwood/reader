@@ -6,7 +6,7 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 
-from .api import articles, ping, updates, users
+from .api import articles, ping, sources, updates, users
 from .db.db import init_db
 
 
@@ -21,6 +21,7 @@ def create_application() -> FastAPI:
     application = FastAPI()
     application.include_router(ping.router)
     application.include_router(articles.router, prefix="/articles", tags=["articles"])
+    application.include_router(sources.router, prefix="/sources", tags=["sources"])
     application.include_router(updates.router, prefix="/updates", tags=["updates"])
     application.include_router(users.router, prefix="/users", tags=["users"])
     application.add_middleware(

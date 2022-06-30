@@ -1,6 +1,26 @@
-from typing import Optional
+from typing import List, Optional
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+
+class UserSourceLink(SQLModel, table=True):
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id", primary_key=True)
+    source_id: Optional[int] = Field(default=None, foreign_key="source.id", primary_key=True)
+
+
+class SourceBase(SQLModel):
+    name: str = Field(nullable=False, sa_column_kwargs={"unique": False})
+    url: str = Field(nullable=False, sa_column_kwargs={"unique": True})
+
+
+class Source(SourceBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    users: List["User"] = Relationship(back_populates="sources", link_model=UserSourceLink)
+    articles: List["Article"] = Relationship(back_populates="source")
+
+
+class SourceGet(SourceBase):
+    id: int
 
 
 class ArticleBase(SQLModel):
@@ -13,6 +33,8 @@ class ArticleBase(SQLModel):
 
 class Article(ArticleBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    source_id: int = Field(default=None, foreign_key="source.id")
+    source: Source = Relationship(back_populates="articles")
 
 
 class ArticleCreate(ArticleBase):
@@ -36,7 +58,11 @@ class Update(SQLModel, table=True):
     timestamp: str = Field(nullable=False, sa_column_kwargs={"unique": True})
 
 
-class User(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+class UserBase(SQLModel):
     email: str = Field(nullable=False, sa_column_kwargs={"unique": True})
     hashed_password: str = Field(nullable=False)
+
+
+class User(UserBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    sources: List["Source"] = Relationship(back_populates="users", link_model=UserSourceLink)

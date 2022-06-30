@@ -118,3 +118,14 @@ async def register(username: str = Form(), password: str = Form()):
         db.insert_user(username=username, hashed_password=hashed_password)
         return {"registered": "true"}
     return {"errors": errors}
+
+
+@router.patch("/add_feed")
+async def add_feed(
+    url: str = Form(),
+    source: str = Form(),
+    published_date: str = Form(),
+    current_user: User = Depends(get_current_user),
+):
+    db.insert_feed(url=url, source=source, published_date=published_date, read=False)
+    return {"added": "true"}

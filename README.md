@@ -75,6 +75,8 @@ To run the frontend `cd` into the `./src/frontend` folder. Run `npm install` if 
 
 ## TODO
 
+- Cron should begin from source table
+
 ### Auth
 
 - When a user adds a feed, it gets added to a feeds table
