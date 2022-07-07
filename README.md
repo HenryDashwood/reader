@@ -79,8 +79,7 @@ To run the frontend `cd` into the `./src/frontend` folder. Run `npm install` if 
 
 ### Auth
 
-- When a user adds a feed, it gets added to a feeds table
-- User can have many feeds, feeds can be had by many useers
+- Add source submitted in text box, and add it to current user's sources
 - Cron job runs for all feeds and caches articles
 - When a user logs in, in just get articles with feeds for that user
 
@@ -90,14 +89,14 @@ To run the frontend `cd` into the `./src/frontend` folder. Run `npm install` if 
 - Password must be decent
 - Reset password
 
-### Pagination
-
-Only show most recent feeds
-
 ### User Functionality
 
 - User can delete their account
 - User can add feed by pasting url
 - User can remove feed from their feed
+
+### Pagination
+
+Only show most recent feeds
 
 ### Payments

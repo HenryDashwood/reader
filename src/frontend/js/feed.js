@@ -94,7 +94,7 @@ const createArticleRow = (dataElement) => {
   row.appendChild(readFlag);
 
   const source = document.createElement("p");
-  source.appendChild(document.createTextNode(dataElement.source));
+  source.appendChild(document.createTextNode(dataElement.source.name));
   source.classList.add("source");
   row.appendChild(source);
 

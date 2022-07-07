@@ -11,6 +11,15 @@
   <body>
     <h1>RSS Reader - <span id="fullname"></span></h1>
     <p class="text-center"><a href="#" class="logout">Log Out</a></p>
+    <form method="post" id="addFeed">
+      <div class="error-message-all"></div>
+      <div class="input-group">
+        <label for="feedUrl" class="label">URL</label>
+        <input type="text" id="feedURL" class="input" />
+        <span class="error-message"></span>
+      </div>
+      <input type="submit" value="Add" />
+    </form>
     <p id="last_update"></p>
     <ul id="feeds_list"></ul>
   </body>
