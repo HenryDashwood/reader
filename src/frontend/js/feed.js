@@ -1,17 +1,42 @@
-const BACKEND_URL = "https://api.reader.henrydashwood.com/";
-// const BACKEND_URL = "http://localhost:8000";
+// const BACKEND_URL = "https://api.reader.henrydashwood.com";
+const BACKEND_URL = "https://localhost:8000";
+
 const ul = document.getElementById("feeds_list");
 
 const getData = async () => {
-  const resp = await fetch(`${BACKEND_URL}/articles`);
+  const resp = await fetch(`${BACKEND_URL}/articles`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
   const json = await resp.json();
   return json;
 };
 
 const getLatestUpdateTimestamp = async () => {
-  const resp = await fetch(`${BACKEND_URL}/updates/latest`);
+  const resp = await fetch(`${BACKEND_URL}/updates/latest`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
   const json = await resp.json();
   return json;
+};
+
+const get_username = async () => {
+  const resp = await fetch(`${BACKEND_URL}/users/me`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  const json = await resp.json();
+  return json["username"];
 };
 
 const updateArticle = async (id, body) => {
@@ -23,8 +48,8 @@ const updateArticle = async (id, body) => {
     method: "PATCH",
     body: JSON.stringify(body),
   });
-  const json = await resp.json();
-  return json;
+  const username = await resp.json()["username"];
+  return username;
 };
 
 const toggleReadCheckbox = async (e) => {
@@ -69,7 +94,7 @@ const createArticleRow = (dataElement) => {
   row.appendChild(readFlag);
 
   const source = document.createElement("p");
-  source.appendChild(document.createTextNode(dataElement.source));
+  source.appendChild(document.createTextNode(dataElement.source.name));
   source.classList.add("source");
   row.appendChild(source);
 
@@ -92,6 +117,8 @@ const createArticleRow = (dataElement) => {
 };
 
 const displayData = async () => {
+  const username_span = document.querySelector("#fullname");
+  username_span.innerHTML = await get_username();
   const articles = await getData();
   const latestUpdate = await getLatestUpdateTimestamp();
   articles.forEach((dataElement) => {

@@ -1,15 +1,60 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="upgrade-insecure-requests"
-    />
-    <link rel="stylesheet" href="./styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <script defer src="js/index.js"></script>
   </head>
-  <body>
-    <h1>RSS Reader</h1>
-    <p id="last_update"></p>
-    <ul id="feeds_list"></ul>
+  <body class="login">
+    <div class="container">
+      <h2 class="text-center">Login</h2>
+      <br />
+      <form method="post" id="loginForm">
+        <div class="error-message-all"></div>
+        <div class="input-group">
+          <label for="username_login" class="label">Username</label>
+          <input type="text" id="username_login" class="input" />
+          <span class="error-message"></span>
+        </div>
+        <br />
+        <div class="input-group">
+          <label for="password_login" class="label">Password</label>
+          <input type="password" id="password_login" class="input" />
+          <span class="error-message"></span>
+        </div>
+        <br />
+        <input type="submit" value="Login" />
+      </form>
+    </div>
+    <div class="container">
+      <h2 class="text-center">Create Account</h2>
+      <br />
+      <form method="post" id="createAccountForm">
+        <div class="error-message-all"></div>
+        <div class="input-group">
+          <label for="username_create" class="label">Email</label>
+          <input type="text" id="username_create" class="input" />
+          <span class="error-message"></span>
+        </div>
+        <br />
+        <div class="input-group">
+          <label for="password_create" class="label">Password</label>
+          <input type="password" id="password_create" class="input" />
+          <span class="error-message"></span>
+        </div>
+        <div class="input-group">
+          <label for="password_confirm" class="label">Confirm Password</label>
+          <input
+            type="password-confirm"
+            id="password_confirm_create"
+            class="input"
+          />
+          <span class="error-message"></span>
+        </div>
+        <br />
+        <input type="submit" value="Create Account" />
+      </form>
+    </div>
   </body>
-  <script src="./index.js"></script>
 </html>

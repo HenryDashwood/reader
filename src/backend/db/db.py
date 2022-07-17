@@ -1,11 +1,12 @@
 from pathlib import Path
 from typing import List
 
-import pandas as pd
+import feedparser
+from dateutil import parser
 from fastapi import HTTPException
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from .SQLmodel import Article, ArticleUpdate, Update
+from .SQLmodel import Article, ArticleUpdate, Source, Update, User
 
 
 PARENT_DIR = Path(__file__).parent.parent.parent.parent.resolve()
@@ -14,46 +15,51 @@ PARENT_DIR = Path(__file__).parent.parent.parent.parent.resolve()
 sqlite_file_name = f"{PARENT_DIR}/data/database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
-engine = create_engine(sqlite_url, echo=True)
+engine = create_engine(sqlite_url, echo=False, connect_args={"check_same_thread": False})
 
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 
-def populate_articles_table_from_file():
-    df = pd.read_csv(f"{PARENT_DIR}/data/latest.csv")
-    for i in range(df.shape[0]):
-        insert_article(df.iloc[i]["title"], df.iloc[i]["link"], df.iloc[i]["source"], df.iloc[i]["pubDate"])
-
-
-def populate_updates_table_from_file():
-    with open(f"{PARENT_DIR}/data/updates.txt") as f:
-        for line in f:
-            insert_update(engine, timestamp=line.strip())
-
-
-def init_db():
+def init_db(populate=False):
     create_db_and_tables()
-    # populate_articles_table_from_file()
-    # populate_updates_table_from_file()
+    if populate:
+        populate_sources_table_from_file()
 
 
-def select_all_articles() -> List:
+def get_session():
     with Session(engine) as session:
-        statement = select(Article).order_by(Article.published_date.desc())
-        results = session.exec(statement)
-        return results.all()
+        yield session
 
 
-def insert_article(title: str, url: str, source: str, published_date: str, read: bool = False):
+# Articles
+
+
+def select_all_articles(offset, limit, session: Session) -> List:
+    statement = select(Article).order_by(Article.published_date.desc()).offset(offset).limit(limit)
+    results = session.exec(statement).all()
+    return results
+
+
+def select_article(article_id: int):
+    with Session(engine) as session:
+        article = session.get(Article, article_id)
+        if not article:
+            raise HTTPException(status_code=404, detail="Article not found")
+        return article
+
+
+def insert_article(title: str, url: str, source: Source, published_date: str, read: bool = False):
     try:
-        article = Article(title=title, url=url, source=source, published_date=published_date, read=read)
+        published_date = parser.parse(published_date).strftime("%Y-%m-%d %H:%M:%S")
+        article = Article(title=title, url=url, published_date=published_date, read=read)
+        article.source = source
         with Session(engine) as session:
             session.add(article)
             session.commit()
     except Exception as e:
-        print(e)
+        return
 
 
 def update_article(id: int, article: ArticleUpdate):
@@ -68,6 +74,9 @@ def update_article(id: int, article: ArticleUpdate):
         session.commit()
         session.refresh(db_article)
         return db_article
+
+
+# Updates
 
 
 def select_all_updates() -> List:
@@ -96,3 +105,81 @@ def insert_update(current_time: str) -> None:
             session.commit()
     except Exception as e:
         print(e)
+
+
+# Users
+
+
+def select_all_users() -> List:
+    with Session(engine) as session:
+        statement = select(User)
+        results = session.exec(statement)
+        return results.all()
+
+
+def insert_user(username: str, hashed_password: str) -> None:
+    try:
+        user = User(email=username, hashed_password=hashed_password)
+        with Session(engine) as session:
+            session.add(user)
+            session.commit()
+    except Exception as e:
+        print(e)
+
+
+# Sources
+
+
+def select_source(source_id: int):
+    with Session(engine) as session:
+        source = session.get(Source, source_id)
+        if not source:
+            raise HTTPException(status_code=404, detail="Source not found")
+        return source
+
+
+def select_source_by_url(url: str) -> Source:
+    with Session(engine) as session:
+        statement = select(Source).where(Source.url == url)
+        results = session.exec(statement).first()
+        return results
+
+
+def insert_source(name: str = "", url: str = "", users: List[User] = []):
+    try:
+        source = select_source_by_url(url)
+        if not source:
+            if name == "":
+                feed = feedparser.parse(url)
+                name = feed.feed.title
+            source = Source(name=name, url=url)
+            with Session(engine) as session:
+                session.add(source)
+                session.commit()
+        source = select_source_by_url(url)
+        return source.json()
+    except Exception as e:
+        return
+
+
+def select_all_sources(offset: int = None, limit: int = None) -> List:
+    with Session(engine) as session:
+        statement = select(Source).offset(offset).limit(limit)
+        results = session.exec(statement).all()
+        return results
+
+
+def populate_sources_table_from_file():
+    import json
+
+    from rich.live import Live
+    from rich.table import Table
+
+    table = Table("Name", "URL")
+    with Live(table, refresh_per_second=4, transient=True):
+        with open(f"{PARENT_DIR}/data/feeds.txt") as f:
+            for line in f:
+                source = insert_source(url=line.strip())
+                if source:
+                    source = json.loads(source)
+                    table.add_row(source["name"], source["url"])
