@@ -1,5 +1,5 @@
-// const BACKEND_URL = "https://api.reader.henrydashwood.com";
-const BACKEND_URL = "https://localhost:8000";
+const BACKEND_URL = "https://api.reader.henrydashwood.com";
+// const BACKEND_URL = "https://localhost:8000";
 
 const ul = document.getElementById("feeds_list");
 

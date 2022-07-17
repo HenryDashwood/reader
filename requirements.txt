@@ -7,5 +7,5 @@ python-dotenv
 python-jose
 python-multipart
 sqlmodel
-typer
+typer[all]
 uvicorn
