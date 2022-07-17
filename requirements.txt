@@ -1,10 +1,11 @@
 fastapi
+feedparser
 pandas
+passlib
 python-dateutil
 python-dotenv
-feedparser
-passlib
 python-jose
+python-multipart
 sqlmodel
 typer
 uvicorn
