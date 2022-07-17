@@ -36,7 +36,10 @@ app = create_application()
 @app.on_event("startup")
 async def startup_event():
     log.info("Starting up...")
-    init_db()
+    init_db(populate=False)
+
+
+# @app.on_event("startup")
 
 
 @app.on_event("shutdown")

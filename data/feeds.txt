@@ -6,7 +6,6 @@ https://antigonejournal.com/feed/
 http://armariummagnus.blogspot.com/feeds/posts/default
 https://caseyhandmer.wordpress.com/feed/
 https://www.mcmiddleearth.com/forums/community-news-and-announcements.11/index.rss
-https://dominiccummings.com/feed/
 http://ben-evans.com/benedictevans?format=rss
 http://gowers.wordpress.com/feed/
 https://gwern.substack.com/feed/
@@ -15,7 +14,6 @@ http://feeds.feedburner.com/cellular-news/LmiX
 https://increment.com/feed.xml
 http://infoproc.blogspot.com/feeds/posts/default
 http://jacobitemag.com/feed/
-http://www.lrb.co.uk/homerss.xml
 https://nintil.com/rss.xml
 http://www.math.columbia.edu/~woit/wordpress/?feed=rss2
 https://palladiummag.com/feed/
@@ -35,7 +33,6 @@ https://axial.substack.com/feed
 https://constructionphysics.substack.com/feed
 https://sambowman.substack.com/feed
 https://deepforest.substack.com/feed
-https://dominiccummings.substack.com/feed
 https://www.epistem.ink/feed
 https://supers.substack.com/feed
 https://inthesightoftheunwise.substack.com/feed
@@ -55,6 +52,6 @@ https://samdumitriu.substack.com/feed
 https://edwest.substack.com/feed
 https://fullstackeconomics.com/rss/
 https://ziggurat.substack.com/feed/
-https://bensouthwood.com/feed/
+https://bensouthwood.substack.com/feed/
 https://accidents.substack.com/feed/
 https://stuartritchie.substack.com/feed/

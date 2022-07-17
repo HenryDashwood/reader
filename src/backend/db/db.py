@@ -1,10 +1,9 @@
 from pathlib import Path
 from typing import List
 
-import pandas as pd
-import requests
+import feedparser
+from dateutil import parser
 from fastapi import HTTPException
-from requests_html import HTMLSession
 from sqlmodel import Session, SQLModel, create_engine, select
 
 from .SQLmodel import Article, ArticleUpdate, Source, Update, User
@@ -16,7 +15,7 @@ PARENT_DIR = Path(__file__).parent.parent.parent.parent.resolve()
 sqlite_file_name = f"{PARENT_DIR}/data/database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
-engine = create_engine(sqlite_url, echo=True, connect_args={"check_same_thread": False})
+engine = create_engine(sqlite_url, echo=False, connect_args={"check_same_thread": False})
 
 
 def create_db_and_tables():
@@ -40,7 +39,6 @@ def get_session():
 def select_all_articles(offset, limit, session: Session) -> List:
     statement = select(Article).order_by(Article.published_date.desc()).offset(offset).limit(limit)
     results = session.exec(statement).all()
-    print(results)
     return results
 
 
@@ -54,6 +52,7 @@ def select_article(article_id: int):
 
 def insert_article(title: str, url: str, source: Source, published_date: str, read: bool = False):
     try:
+        published_date = parser.parse(published_date).strftime("%Y-%m-%d %H:%M:%S")
         article = Article(title=title, url=url, published_date=published_date, read=read)
         article.source = source
         with Session(engine) as session:
@@ -146,14 +145,19 @@ def select_source_by_url(url: str) -> Source:
         return results
 
 
-def insert_source(name: str, url: str, users: List[User] = []):
+def insert_source(name: str = "", url: str = "", users: List[User] = []):
     try:
-        existing_source = select_source_by_url(url)
-        if not existing_source:
+        source = select_source_by_url(url)
+        if not source:
+            if name == "":
+                feed = feedparser.parse(url)
+                name = feed.feed.title
             source = Source(name=name, url=url)
             with Session(engine) as session:
                 session.add(source)
                 session.commit()
+        source = select_source_by_url(url)
+        return source.json()
     except Exception as e:
         return
 
@@ -166,6 +170,16 @@ def select_all_sources(offset: int = None, limit: int = None) -> List:
 
 
 def populate_sources_table_from_file():
-    with open(f"{PARENT_DIR}/data/feeds.txt") as f:
-        for line in f:
-            insert_source(engine, timestamp=line.strip())
+    import json
+
+    from rich.live import Live
+    from rich.table import Table
+
+    table = Table("Name", "URL")
+    with Live(table, refresh_per_second=4, transient=True):
+        with open(f"{PARENT_DIR}/data/feeds.txt") as f:
+            for line in f:
+                source = insert_source(url=line.strip())
+                if source:
+                    source = json.loads(source)
+                    table.add_row(source["name"], source["url"])
