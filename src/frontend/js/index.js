@@ -1,5 +1,5 @@
-// const BACKEND_URL = "https://api.reader.henrydashwood.com";
-const BACKEND_URL = "https://localhost:8000";
+const BACKEND_URL = "https://api.reader.henrydashwood.com";
+// const BACKEND_URL = "https://localhost:8000";
 
 class Login {
   constructor(form, fields) {
