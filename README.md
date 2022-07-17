@@ -19,7 +19,8 @@ In order to make Apache work, you should configure `/etc/apache2/sites-available
      ServerAdmin webmaster@localhost
      ServerName reader.henrydashwood.com
      ServerAlias www.reader.henrydashwood.com
-     DocumentRoot /var/www/reader.henrydashwood.com
+     ProxyPass / http://127.0.0.1:1234/
+     ProxyPassReverse / http://127.0.0.1:1234/
      ErrorLog ${APACHE_LOG_DIR}/error.log
      CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
