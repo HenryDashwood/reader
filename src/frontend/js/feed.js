@@ -1,5 +1,5 @@
-const BACKEND_URL = "https://api.reader.henrydashwood.com";
-// const BACKEND_URL = "https://localhost:8000";
+// const BACKEND_URL = "https://api.reader.henrydashwood.com";
+const BACKEND_URL = "https://localhost:8000";
 
 const ul = document.getElementById("feeds_list");
 
@@ -94,6 +94,7 @@ const createArticleRow = (dataElement) => {
   row.appendChild(readFlag);
 
   const source = document.createElement("p");
+  console.log(dataElement.source);
   source.appendChild(document.createTextNode(dataElement.source.name));
   source.classList.add("source");
   row.appendChild(source);
@@ -121,6 +122,7 @@ const displayData = async () => {
   username_span.innerHTML = await get_username();
   const articles = await getData();
   const latestUpdate = await getLatestUpdateTimestamp();
+  console.log(articles);
   articles.forEach((dataElement) => {
     const li = document.createElement("li");
     row = createArticleRow(dataElement);
