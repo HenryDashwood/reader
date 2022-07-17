@@ -78,7 +78,6 @@ To run the frontend `cd` into the `./src/frontend` folder. Run `npm install` if 
 ### Auth
 
 - Add source submitted in text box, and add it to current user's sources
-- Cron job runs for all feeds and caches articles
 - When a user logs in, in just get articles with feeds for that user
 
 ### Further auth

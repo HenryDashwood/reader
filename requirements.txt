@@ -1,8 +1,10 @@
 fastapi
 pandas
 python-dateutil
-requests
-requests_html
+python-dotenv
+feedparser
+passlib
+python-jose
 sqlmodel
 typer
 uvicorn
