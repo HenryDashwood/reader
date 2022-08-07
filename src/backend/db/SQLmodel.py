@@ -19,7 +19,7 @@ class Source(SourceBase, table=True):
     articles: List["Article"] = Relationship(back_populates="source")
 
 
-class SourceGet(SourceBase):
+class SourceRead(SourceBase):
     id: int
 
 
@@ -47,16 +47,16 @@ class ArticleGet(ArticleBase):
 class ArticleUpdate(SQLModel):
     title: Optional[str] = None
     url: Optional[str] = None
-    source: Optional[str] = None
+    source_id: Optional[int] = None
     published_date: Optional[str] = None
     read: Optional[bool] = None
 
 
 class ArticleReadWithSource(ArticleGet):
-    source: Optional[SourceGet] = None
+    source: Optional[SourceRead] = None
 
 
-class SourceReadWithArticles(SourceGet):
+class SourceReadWithArticles(SourceRead):
     articles: List[ArticleGet] = []
 
 

@@ -52,23 +52,26 @@ def select_article(article_id: int):
 
 def insert_article(title: str, url: str, source: Source, published_date: str, read: bool = False):
     try:
-        published_date = parser.parse(published_date).strftime("%Y-%m-%d %H:%M:%S")
-        article = Article(title=title, url=url, published_date=published_date, read=read)
-        article.source = source
         with Session(engine) as session:
+            existing_article = session.exec(select(Article).where(Article.url == url)).first()
+            if existing_article:
+                return
+            published_date = parser.parse(published_date).strftime("%Y-%m-%d %H:%M:%S")
+            article = Article(title=title, url=url, published_date=published_date, read=read)
+            article.source = source
             session.add(article)
             session.commit()
     except Exception as e:
+        print(e)
         return
 
 
-def update_article(id: int, article: ArticleUpdate):
+def update_article(id: int, new_article: ArticleUpdate):
     with Session(engine) as session:
         db_article = session.get(Article, id)
         if not db_article:
             raise HTTPException(status_code=404, detail="Article not found")
-        new_article_data = article.dict(exclude_unset=True)
-        for key, value in new_article_data.items():
+        for key, value in new_article.dict(exclude_unset=True).items():
             setattr(db_article, key, value)
         session.add(db_article)
         session.commit()
@@ -141,8 +144,15 @@ def select_source(source_id: int):
 def select_source_by_url(url: str) -> Source:
     with Session(engine) as session:
         statement = select(Source).where(Source.url == url)
-        results = session.exec(statement).first()
-        return results
+        result = session.exec(statement).first()
+        return result
+
+
+def select_source_by_name(name: str) -> Source:
+    with Session(engine) as session:
+        statement = select(Source).where(Source.name == name)
+        result = session.exec(statement).first()
+        return result
 
 
 def insert_source(name: str = "", url: str = "", users: List[User] = []):

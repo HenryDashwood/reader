@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
 
 from src.backend.db import db
-from src.backend.db.SQLmodel import Article, ArticleGet, ArticleReadWithSource, ArticleUpdate
+from src.backend.db.SQLmodel import ArticleGet, ArticleReadWithSource, ArticleUpdate
 
 from .users import User, get_current_user
 
@@ -29,7 +29,7 @@ def get_article(article_id: int):
 
 
 @router.patch("/read/{id}", response_model=ArticleGet)
-def edit_article(id: int, article: ArticleUpdate, current_user: User = Depends(get_current_user)):
+def toggle_read(id: int, article: ArticleUpdate, current_user: User = Depends(get_current_user)):
     return db.update_article(id, article)
 
 

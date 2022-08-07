@@ -44,6 +44,7 @@ const updateArticle = async (id, body) => {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
     },
     method: "PATCH",
     body: JSON.stringify(body),

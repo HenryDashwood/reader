@@ -14,7 +14,10 @@ app = Typer()
 def parse_feed(url: str):
     parsed_feed = []
     feed = feedparser.parse(url)
-    source = feed.feed.title
+    try:
+        source = feed.feed.title
+    except:
+        source = "Unknown Source"
     for entry in feed["entries"]:
         parsed_feed.append(
             {"title": entry["title"], "url": entry["link"], "pub_date": entry["published"], "source": source}

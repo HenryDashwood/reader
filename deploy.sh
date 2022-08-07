@@ -2,8 +2,8 @@ PRIVATE_KEY=$1
 IP=$2
 
 function killport() {
-  # local port=$(lsof -t -i:"8000")
-  [[ -n $port ]] && kill $(lsof -t -i:"8000")
+  local port=$(lsof -t -i:"8000")
+  [[ -n $port ]] && kill $port
 }
 
 ssh -i $PRIVATE_KEY ubuntu@$IP "cd ~/reader && git pull"
