@@ -45,7 +45,7 @@ function buildFrontend() {
 
 
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f updateCode); updateCode"
+scp -i $PRIVATE_KEY ./src/frontend/.prod.env ubuntu@$IP:~/reader/src/frontend/
+ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f buildFrontend); buildFrontend"
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f killport); killport"
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f buildBackend); buildBackend"
-scp -i $PRIVATE_KEY ~/reader/src/frontend/.prod.env ubuntu@$IP:~/reader/src/frontend/
-ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f buildFrontend); buildFrontend"
