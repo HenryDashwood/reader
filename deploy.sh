@@ -36,16 +36,17 @@ function buildBackend() {
 
 function buildFrontend() {
   echo "Building frontend"
-  rm -rf ~/reader/src/frontend/.parcel-cache ~/reader/src/frontend/dist
-  npx parcel build ~/reader/src/frontend/*.html
-  cp ~/reader/src/frontend/.prod.env dist/.env 
+  cd ~/reader/src/frontend
+  rm -rf .parcel-cache dist
+  npx parcel build *.html
+  cp .env dist/
   sudo rm /var/www/reader.henrydashwood.com/*
-  sudo cp -r ~/reader/src/frontend/dist/* /var/www/reader.henrydashwood.com/
+  sudo cp -r dist/* /var/www/reader.henrydashwood.com/
 }
 
 
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f updateCode); updateCode"
-scp -i $PRIVATE_KEY ./src/frontend/.prod.env ubuntu@$IP:~/reader/src/frontend/
+scp -i $PRIVATE_KEY ./src/frontend/.prod.env ubuntu@$IP:~/reader/src/frontend/.env
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f buildFrontend); buildFrontend"
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f killport); killport"
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f buildBackend); buildBackend"
