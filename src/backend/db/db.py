@@ -6,7 +6,7 @@ from dateutil import parser
 from fastapi import HTTPException
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from .SQLmodel import Article, ArticleUpdate, Source, Update, User
+from .SQLmodel import Article, ArticleReadWithSource, ArticleUpdate, Source, Update, User
 
 
 PARENT_DIR = Path(__file__).parent.parent.parent.parent.resolve()
@@ -36,7 +36,7 @@ def get_session():
 # Articles
 
 
-def select_all_articles(offset, limit, session: Session) -> List:
+def select_all_articles(offset, limit, session: Session) -> List[ArticleReadWithSource]:
     statement = select(Article).order_by(Article.published_date.desc()).offset(offset).limit(limit)
     results = session.exec(statement).all()
     return results

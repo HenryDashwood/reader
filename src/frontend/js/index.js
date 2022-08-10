@@ -1,5 +1,4 @@
-const BACKEND_URL = "https://api.reader.henrydashwood.com";
-// const BACKEND_URL = "https://localhost:8000";
+require("dotenv").config();
 
 class Login {
   constructor(form, fields) {
@@ -22,7 +21,7 @@ class Login {
         const formData = new FormData();
         formData.append("username", this.form.elements["username_login"].value);
         formData.append("password", this.form.elements["password_login"].value);
-        fetch(`${BACKEND_URL}/token`, {
+        fetch(`${process.env.BACKEND_URL}/token`, {
           method: "post",
           body: formData,
         })
@@ -97,7 +96,7 @@ if (loginForm) {
 
 const registerAccount = async (e) => {
   e.preventDefault();
-  resp = await fetch(`${BACKEND_URL}/users/register`, {
+  resp = await fetch(`${process.env.BACKEND_URL}/users/register`, {
     method: "post",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",

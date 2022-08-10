@@ -18,7 +18,7 @@ def get_all_articles(
     limit: int = Query(default=100, lte=100),
     session: Session = Depends(db.get_session),
     current_user: User = Depends(get_current_user),
-) -> List:
+) -> List[ArticleReadWithSource]:
     articles = db.select_all_articles(offset, limit, session)
     return articles
 

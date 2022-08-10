@@ -7,8 +7,7 @@ function killport() {
 }
 
 function updateCode() {
-  if [ -d "~/reader" ] 
-  then
+  if [ -d ~/reader ]; then
     cd ~/reader
     git pull
   else
@@ -20,12 +19,27 @@ function buildBackend() {
   cd ~/reader
   ~/.pyenv/versions/3.10.5/envs/py3105/bin/python3.10 -m pip install -U pip
   ~/.pyenv/versions/3.10.5/envs/py3105/bin/python3.10 -m pip install -U -r requirements.txt
-  ~/.pyenv/versions/py3105/bin/python -m uvicorn src.backend.main:app &
+
+  PID=$(ps aux | grep 'uvicorn src.backend.main:app' | grep -v grep | awk {'print $2'} | xargs)
+  if [ "$PID" != "" ]; then
+    kill -9 $PID
+    sleep 2
+    echo "" > nohup.out
+    echo "Restarting FastAPI server"
+  else
+    echo "No such process. Starting new FastAPI server"
+  fi
+  nohup ~/.pyenv/versions/3.10.5/envs/py3105/bin/python3.10 -m uvicorn src.backend.main:app &
+
+  # ~/.pyenv/versions/py3105/bin/python -m uvicorn src.backend.main:app &
 }
 
 function buildFrontend() {
-  cd ~/reader/src/frontend
-  npx parcel build ./*.html
+  echo "Building frontend"
+  rm -rf ~/reader/src/frontend/.parcel-cache ~/reader/src/frontend/dist
+  npx parcel build ~/reader/src/frontend/*.html
+  cp ~/reader/src/frontend/.prod.env dist/.env 
+  sudo rm /var/www/reader.henrydashwood.com/*
   sudo cp -r ~/reader/src/frontend/dist/* /var/www/reader.henrydashwood.com/
 }
 
@@ -33,4 +47,5 @@ function buildFrontend() {
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f updateCode); updateCode"
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f killport); killport"
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f buildBackend); buildBackend"
+scp -i $PRIVATE_KEY ~/reader/src/frontend/.prod.env ubuntu@$IP:~/reader/src/frontend/
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f buildFrontend); buildFrontend"

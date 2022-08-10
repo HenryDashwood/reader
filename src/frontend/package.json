@@ -3,16 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "parcel ./*.html",
+    "start": "cp .local.env dist/.env && parcel ./*.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Henry Dashwood",
   "license": "ISC",
   "dependencies": {
-    "parcel": "^2.7.0"
+    "dotenv": "^16.0.1",
+    "parcel": "^2.7.0",
+    "path": "^0.12.7"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.12.5"
+    "parcel-bundler": "^1.12.5",
+    "path-browserify": "^1.0.1"
   },
   "browserslist": [
     "last 1 chrome versions"

@@ -1,10 +1,9 @@
-const BACKEND_URL = "https://api.reader.henrydashwood.com";
-// const BACKEND_URL = "https://localhost:8000";
+require("dotenv").config();
 
 const ul = document.getElementById("feeds_list");
 
 const getData = async () => {
-  const resp = await fetch(`${BACKEND_URL}/articles`, {
+  const resp = await fetch(`${process.env.BACKEND_URL}/articles`, {
     method: "GET",
     headers: {
       accept: "application/json",
@@ -16,7 +15,7 @@ const getData = async () => {
 };
 
 const getLatestUpdateTimestamp = async () => {
-  const resp = await fetch(`${BACKEND_URL}/updates/latest`, {
+  const resp = await fetch(`${process.env.BACKEND_URL}/updates/latest`, {
     method: "GET",
     headers: {
       accept: "application/json",
@@ -28,7 +27,7 @@ const getLatestUpdateTimestamp = async () => {
 };
 
 const get_username = async () => {
-  const resp = await fetch(`${BACKEND_URL}/users/me`, {
+  const resp = await fetch(`${process.env.BACKEND_URL}/users/me`, {
     method: "GET",
     headers: {
       accept: "application/json",
@@ -40,7 +39,7 @@ const get_username = async () => {
 };
 
 const updateArticle = async (id, body) => {
-  const resp = await fetch(`${BACKEND_URL}/articles/read/${id}`, {
+  const resp = await fetch(`${process.env.BACKEND_URL}/articles/read/${id}`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
