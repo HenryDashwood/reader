@@ -30,16 +30,13 @@ function buildBackend() {
     echo "No such process. Starting new FastAPI server"
   fi
   nohup ~/.pyenv/versions/3.10.5/envs/py3105/bin/python3.10 -m uvicorn src.backend.main:app &
-
-  # ~/.pyenv/versions/py3105/bin/python -m uvicorn src.backend.main:app &
 }
 
 function buildFrontend() {
   echo "Building frontend"
   cd ~/reader/src/frontend
   rm -rf .parcel-cache dist
-  npx parcel build *.html
-  cp .env dist/
+  npx parcel build ./*.html
   sudo rm /var/www/reader.henrydashwood.com/*
   sudo cp -r dist/* /var/www/reader.henrydashwood.com/
 }
