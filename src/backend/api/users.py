@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
 
 class Token(BaseModel):
@@ -31,11 +31,11 @@ class TokenData(BaseModel):
     username: str | None = None
 
 
-class User(BaseModel):
+class LoginUser(BaseModel):
     username: str | None = None
 
 
-class UserInDB(User):
+class LoginUserInDB(LoginUser):
     hashed_password: str
 
 
@@ -52,7 +52,7 @@ def get_user(username: str, session):
     for user in users:
         if user.email == username:
             user_dict = {"username": user.email, "hashed_password": user.hashed_password}
-            return UserInDB(**user_dict)
+            return LoginUserInDB(**user_dict)
 
 
 def authenticate_user(username: str, password: str, session):
@@ -64,9 +64,7 @@ def authenticate_user(username: str, password: str, session):
     return user
 
 
-def create_access_token(
-    data: dict, expires_delta: timedelta | None = None, settings: Settings = Depends(get_settings)
-):
+def create_access_token(settings: Settings, data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -77,7 +75,11 @@ def create_access_token(
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme), settings: Settings = Depends(get_settings)):
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    settings: Settings = Depends(get_settings),
+    session: Session = Depends(get_session),
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -91,14 +93,14 @@ async def get_current_user(token: str = Depends(oauth2_scheme), settings: Settin
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(username=token_data.username)
+    user = get_user(username=token_data.username, session=session)
     if user is None:
         raise credentials_exception
     return user
 
 
-@router.get("/me", response_model=User)
-async def read_users_me(current_user: User = Depends(get_current_user)):
+@router.get("/me", response_model=LoginUser)
+async def read_users_me(current_user: LoginUser = Depends(get_current_user)):
     return {"username": current_user.username}
 
 
@@ -135,16 +137,5 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
-    access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
+    access_token = create_access_token(settings, data={"sub": user.username}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
-
-
-def some_other_func(session: Session):
-    users = session.exec(select(User))
-    print("doing some other func thing")
-
-
-@router.post("/demo")
-def demo(*, session: Session = Depends(get_session)):
-    some_other_func(session)
-    return {"demo": "success"}
