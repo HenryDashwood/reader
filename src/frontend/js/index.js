@@ -22,7 +22,7 @@ class Login {
         formData.append("username", this.form.elements["username_login"].value);
         formData.append("password", this.form.elements["password_login"].value);
         console.log(process.env.BACKEND_URL);
-        fetch(`${process.env.BACKEND_URL}/token`, {
+        fetch(`${process.env.BACKEND_URL}/users/token`, {
           method: "post",
           body: formData,
         })

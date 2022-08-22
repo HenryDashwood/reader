@@ -9,7 +9,7 @@ class UserSourceLink(SQLModel, table=True):
 
 
 class SourceBase(SQLModel):
-    name: str = Field(nullable=False)
+    name: Optional[str] = Field(nullable=True)
     url: str = Field(nullable=False, sa_column_kwargs={"unique": True})
 
 

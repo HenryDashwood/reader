@@ -4,10 +4,10 @@ from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordRequestForm
+from sqlmodel import Session
 
 from .api import articles, ping, sources, updates, users
-from .db.db import init_db
+from .db.db import get_session, init_db
 
 
 log = logging.getLogger(__name__)
@@ -39,26 +39,9 @@ async def startup_event():
     init_db(populate=False)
 
 
-# @app.on_event("startup")
-
-
 @app.on_event("shutdown")
 async def shutdown_event():
     log.info("Shutting down...")
-
-
-@app.post("/token", response_model=users.Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = users.authenticate_user(form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = users.create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
-    return {"access_token": access_token, "token_type": "bearer"}
 
 
 if __name__ == "__main__":

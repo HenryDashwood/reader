@@ -1,28 +1,22 @@
 import os
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import List, Optional
-from urllib.request import Request
 
-from dotenv import load_dotenv
-from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import APIRouter, Depends, Form, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
+from sqlmodel import Session, select
 
-from src.backend.db import db
+from src.backend.config import Settings, get_settings
+from src.backend.db.db import get_session
 from src.backend.db.SQLmodel import User
 
 
 router = APIRouter()
 
-PROJECT_FOLDER = Path(__file__).parent.parent.parent.parent.resolve()
-load_dotenv(dotenv_path=PROJECT_FOLDER / ".env")
-
 # to get a string like this run openssl rand -hex 32
-SECRET_KEY = os.getenv("secret_key")
-ALGORITHM = "HS256"
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -53,16 +47,16 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(username: str):
-    users = db.select_all_users()
+def get_user(username: str, session):
+    users = session.exec(select(User))
     for user in users:
         if user.email == username:
             user_dict = {"username": user.email, "hashed_password": user.hashed_password}
             return UserInDB(**user_dict)
 
 
-def authenticate_user(username: str, password: str):
-    user = get_user(username)
+def authenticate_user(username: str, password: str, session):
+    user = get_user(username=username, session=session)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -70,25 +64,27 @@ def authenticate_user(username: str, password: str):
     return user
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(
+    data: dict, expires_delta: timedelta | None = None, settings: Settings = Depends(get_settings)
+):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(token: str = Depends(oauth2_scheme), settings: Settings = Depends(get_settings)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
@@ -107,7 +103,7 @@ async def read_users_me(current_user: User = Depends(get_current_user)):
 
 
 @router.post("/register")
-async def register(username: str = Form(), password: str = Form()):
+async def register(*, session: Session = Depends(get_session), username: str = Form(), password: str = Form()):
     errors = []
     if not username.__contains__("@"):
         errors.append("Valid email required")
@@ -115,17 +111,40 @@ async def register(username: str = Form(), password: str = Form()):
         errors.append("Password too short")
     if not errors:
         hashed_password = get_password_hash(password)
-        db.insert_user(username=username, hashed_password=hashed_password)
+        try:
+            user = User(email=username, hashed_password=hashed_password)
+            session.add(user)
+            session.commit()
+        except Exception as e:
+            print(e)
         return {"registered": "true"}
     return {"errors": errors}
 
 
-@router.patch("/add_feed")
-async def add_feed(
-    url: str = Form(),
-    source: str = Form(),
-    published_date: str = Form(),
-    current_user: User = Depends(get_current_user),
+@router.post("/token", response_model=Token)
+async def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    settings: Settings = Depends(get_settings),
+    session: Session = Depends(get_session),
 ):
-    db.insert_feed(url=url, source=source, published_date=published_date, read=False)
-    return {"added": "true"}
+    user = authenticate_user(username=form_data.username, password=form_data.password, session=session)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
+    access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+def some_other_func(session: Session):
+    users = session.exec(select(User))
+    print("doing some other func thing")
+
+
+@router.post("/demo")
+def demo(*, session: Session = Depends(get_session)):
+    some_other_func(session)
+    return {"demo": "success"}
