@@ -21,12 +21,10 @@ def main() -> None:
         for line in f:
             source = httpx.post(
                 f"{BACKEND_URL}/sources/add",
-                payload={"url": line.strip()},
+                data={"url": line.strip()},
                 headers={"Authorization": f"{auth['token_type']} {auth['access_token']}"},
             )
-            if source:
-                source = json.loads(source)
-                print(source)
+            print(source.json())
 
 
 if __name__ == "__main__":
