@@ -21,7 +21,7 @@ def main() -> None:
         for line in f:
             source = httpx.post(
                 f"{BACKEND_URL}/sources/add",
-                data={"url": line.strip()},
+                json={"url": line.strip()},
                 headers={"Authorization": f"{auth['token_type']} {auth['access_token']}"},
             )
             print(source.json())

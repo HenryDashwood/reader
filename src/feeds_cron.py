@@ -45,7 +45,7 @@ def parse_all_feeds() -> None:
                 "source_name": source["name"],
             }
             _ = httpx.post(f"{BACKEND_URL}/articles/add", json=payload)
-    httpx.post(f"{BACKEND_URL}/updates/add", data={"timestamp": datetime.now().strftime("%m/%d/%Y:%H:%M:%S")})
+    _ = httpx.post(f"{BACKEND_URL}/updates/add", json={"timestamp": datetime.now().strftime("%m/%d/%Y:%H:%M:%S")})
 
 
 @app.command()

@@ -32,11 +32,9 @@ def get_last_update(*, session: Session = Depends(get_session), current_user: Us
         return "Never"
 
 
-@router.post("/add", response_model=str)
+@router.post("/add", response_model=Update)
 def add_update(*, session: Session = Depends(get_session), payload: UpdateBase):
-    try:
-        update = Update(timestamp=payload.timestamp)
-        session.add(update)
-        session.commit()
-    except Exception as e:
-        print(e)
+    update = Update(timestamp=payload.timestamp)
+    session.add(update)
+    session.commit()
+    return update

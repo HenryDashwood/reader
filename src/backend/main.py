@@ -1,10 +1,9 @@
 import logging
 
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api import articles, ping, sources, updates, users
-from .config import Settings, get_settings
 from .db.db import init_db
 
 
@@ -32,8 +31,6 @@ app = create_application()
 async def startup_event():
     log.info("Starting up...")
     init_db()
-    # if settings.populate:
-    #     sources.populate_sources_table_from_file()
 
 
 @app.on_event("shutdown")
