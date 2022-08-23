@@ -48,9 +48,9 @@ def parse_all_feeds() -> None:
                     "read": False,
                     "source_name": source["name"],
                 }
-                response = httpx.post(f"{BACKEND_URL}/articles/add", data=payload)
+                response = httpx.post(f"{BACKEND_URL}/articles/add", json=payload)
                 data = response.json()
-                table.add_row(data["url"], data["title"], data["source"], data["pub_date"])
+                table.add_row(data["url"], data["title"], data["source"]["name"], data["published_date"])
     httpx.post(f"{BACKEND_URL}/updates/add", data={"timestamp": datetime.now().strftime("%m/%d/%Y:%H:%M:%S")})
 
 

@@ -76,6 +76,8 @@ To run the frontend `cd` into the `./src/frontend` folder. Run `npm install` if 
 
 ## TODO
 
+- Nicer way to pass params with httpx
+
 ### Auth
 
 - Add source submitted in text box, and add it to current user's sources

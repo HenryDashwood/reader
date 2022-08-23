@@ -54,20 +54,20 @@ def toggle_read(
     return db_article
 
 
-@router.post("/add", response_model=Article)
+@router.post("/add", response_model=ArticleReadWithSource)
 def add_article(*, session: Session = Depends(get_session), payload: ArticleCreate) -> Article:
     existing_article = session.exec(select(Article).where(Article.url == payload.url)).first()
     if existing_article:
         return existing_article
+    source = session.exec(select(Source).where(Source.name == payload.source_name)).first()
+    source_id = source.id if source else None
     article = Article(
         title=payload.title,
         url=payload.url,
         published_date=parser.parse(payload.published_date).strftime("%Y-%m-%d %H:%M:%S"),
         read=payload.read,
+        source_id=source_id,
     )
-    source = session.exec(select(Source).where(Source.name == payload.source_name)).first()
-    if source:
-        article.source = source
     session.add(article)
     session.commit()
-    return article
+    return session.exec(select(Article).where(Article.id == article.id)).first()

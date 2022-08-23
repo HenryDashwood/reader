@@ -3,7 +3,7 @@ require("dotenv").config();
 const ul = document.getElementById("feeds_list");
 
 const getData = async () => {
-  const resp = await fetch(`${process.env.BACKEND_URL}/articles`, {
+  const resp = await fetch(`${process.env.BACKEND_URL}/articles/`, {
     method: "GET",
     headers: {
       accept: "application/json",
