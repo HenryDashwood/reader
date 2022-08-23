@@ -36,7 +36,9 @@ def get_source(*, session: Session = Depends(get_session), source_id: int):
 
 
 @router.post("/add", response_model=Source)
-def add_source(*, session: Session = Depends(get_session), payload: SourceBase):
+def add_source(
+    *, session: Session = Depends(get_session), payload: SourceBase, current_user: User = Depends(get_current_user)
+):
     try:
         statement = select(Source).where(Source.url == payload.url)
         source = session.exec(statement).first()

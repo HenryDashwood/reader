@@ -13,6 +13,7 @@ function updateCode() {
   else
     git clone git@github.com:HenryDashwood/reader.git
     touch ~/reader/data/database.db
+  fi
 }
 
 function buildBackend() {
