@@ -1,4 +1,6 @@
+import json
 from datetime import datetime
+from pathlib import Path
 
 import feedparser
 import httpx
@@ -8,6 +10,7 @@ from typer import Typer
 app = Typer()
 
 BACKEND_URL = "http://localhost:8000"
+PROJECT_FOLDER = Path(__file__).parent.parent
 
 
 def parse_feed(url: str):
@@ -50,7 +53,12 @@ def parse_all_feeds() -> None:
 
 @app.command()
 def main() -> None:
-    parse_all_feeds()
+    with open(f"{PROJECT_FOLDER}/data/feeds.txt") as f:
+        for line in f:
+            source = add_source(payload={"url": line.strip()})
+            if source:
+                source = json.loads(source)
+                table.add_row(source["name"], source["url"])
 
 
 if __name__ == "__main__":

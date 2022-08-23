@@ -54,22 +54,6 @@ def add_source(*, session: Session = Depends(get_session), payload: SourceBase):
         return
 
 
-def populate_sources_table_from_file():
-    import json
-
-    from rich.live import Live
-    from rich.table import Table
-
-    table = Table("Name", "URL")
-    with Live(table, refresh_per_second=4, transient=True):
-        with open(f"{PROJECT_FOLDER}/data/feeds.txt") as f:
-            for line in f:
-                source = add_source(payload={"url": line.strip()})
-                if source:
-                    source = json.loads(source)
-                    table.add_row(source["name"], source["url"])
-
-
 # def select_source_by_url(*, session: Session = Depends(get_session), url: str) -> Source:
 #     statement = select(Source).where(Source.url == url)
 #     result = session.exec(statement).first()

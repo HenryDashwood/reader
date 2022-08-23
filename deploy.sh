@@ -12,7 +12,7 @@ function updateCode() {
     git pull
   else
     git clone git@github.com:HenryDashwood/reader.git
-  fi
+    touch ~/reader/data/database.db
 }
 
 function buildBackend() {
@@ -34,6 +34,7 @@ function buildBackend() {
 
 function buildFrontend() {
   echo "Building frontend"
+  echo BACKEND_URL=https://api.reader.henrydashwood.com >> ~/reader/src/frontend/.env
   cd ~/reader/src/frontend
   rm -rf .parcel-cache dist
   npx parcel build ./*.html
@@ -43,7 +44,6 @@ function buildFrontend() {
 
 
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f updateCode); updateCode"
-scp -i $PRIVATE_KEY ./src/frontend/.prod.env ubuntu@$IP:~/reader/src/frontend/.env
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f buildFrontend); buildFrontend"
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f killport); killport"
 ssh -i $PRIVATE_KEY ubuntu@$IP "$(typeset -f buildBackend); buildBackend"
