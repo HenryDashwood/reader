@@ -4,6 +4,7 @@ import feedparser
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
+from src.backend.config import PROJECT_FOLDER
 from src.backend.db.db import get_session
 from src.backend.db.SQLmodel import Source, SourceBase, SourceRead, SourceReadWithArticles
 
@@ -51,3 +52,31 @@ def add_source(*, session: Session = Depends(get_session), payload: SourceBase):
         return source
     except Exception as e:
         return
+
+
+def populate_sources_table_from_file():
+    import json
+
+    from rich.live import Live
+    from rich.table import Table
+
+    table = Table("Name", "URL")
+    with Live(table, refresh_per_second=4, transient=True):
+        with open(f"{PROJECT_FOLDER}/data/feeds.txt") as f:
+            for line in f:
+                source = add_source(payload={"url": line.strip()})
+                if source:
+                    source = json.loads(source)
+                    table.add_row(source["name"], source["url"])
+
+
+# def select_source_by_url(*, session: Session = Depends(get_session), url: str) -> Source:
+#     statement = select(Source).where(Source.url == url)
+#     result = session.exec(statement).first()
+#     return result
+
+
+def select_source_by_name(*, session: Session = Depends(get_session), name: str) -> Source:
+    # statement = select(Source).where(Source.name == name)
+    result = session.exec(select(Source).where(Source.name == name)).first()
+    return result

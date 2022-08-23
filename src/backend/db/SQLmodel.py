@@ -36,7 +36,11 @@ class Article(ArticleBase, table=True):
     source: Source = Relationship(back_populates="articles")
 
 
-class ArticleCreate(ArticleBase):
+class ArticleCreate(SQLModel):
+    title: str = Field(nullable=False)
+    url: str = Field(nullable=False, sa_column_kwargs={"unique": True})
+    published_date: str = Field(nullable=False)
+    read: bool = Field(default=False, nullable=False)
     source_name: str = Field(nullable=False)
 
 
@@ -60,9 +64,12 @@ class SourceReadWithArticles(SourceRead):
     articles: List[ArticleGet] = []
 
 
-class Update(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+class UpdateBase(SQLModel):
     timestamp: str = Field(nullable=False, sa_column_kwargs={"unique": True})
+
+
+class Update(UpdateBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
 
 
 class UserBase(SQLModel):

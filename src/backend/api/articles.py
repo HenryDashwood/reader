@@ -5,8 +5,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
 from src.backend.db.db import get_session
-from src.backend.db.SQLmodel import Article, ArticleGet, ArticleReadWithSource, ArticleUpdate
+from src.backend.db.SQLmodel import Article, ArticleCreate, ArticleGet, ArticleReadWithSource, ArticleUpdate
 
+from .sources import Source
 from .users import User, get_current_user
 
 
@@ -53,26 +54,20 @@ def toggle_read(
     return db_article
 
 
-@router.post("/add")
-def add_article(
-    *,
-    session: Session = Depends(get_session),
-    title: str,
-    url: str,
-    source: str,
-    published_date: str,
-    read: bool = False,
-    current_user: User = Depends(get_current_user),
-):
-    try:
-        existing_article = session.exec(select(Article).where(Article.url == url)).first()
-        if existing_article:
-            return
-        published_date = parser.parse(published_date).strftime("%Y-%m-%d %H:%M:%S")
-        article = Article(title=title, url=url, published_date=published_date, read=read)
+@router.post("/add", response_model=Article)
+def add_article(*, session: Session = Depends(get_session), payload: ArticleCreate) -> Article:
+    existing_article = session.exec(select(Article).where(Article.url == payload.url)).first()
+    if existing_article:
+        return existing_article
+    article = Article(
+        title=payload.title,
+        url=payload.url,
+        published_date=parser.parse(payload.published_date).strftime("%Y-%m-%d %H:%M:%S"),
+        read=payload.read,
+    )
+    source = session.exec(select(Source).where(Source.name == payload.source_name)).first()
+    if source:
         article.source = source
-        session.add(article)
-        session.commit()
-    except Exception as e:
-        print(e)
-        return
+    session.add(article)
+    session.commit()
+    return article

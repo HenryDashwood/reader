@@ -1,20 +1,15 @@
 import logging
-from datetime import timedelta
-from pathlib import Path
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlmodel import Session
 
 from .api import articles, ping, sources, updates, users
-from .db.db import get_session, init_db
+from .config import Settings, get_settings
+from .db.db import init_db
 
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-
-PARENT_DIR = Path(__file__).parent.parent.parent.resolve()
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 def create_application() -> FastAPI:
@@ -36,7 +31,9 @@ app = create_application()
 @app.on_event("startup")
 async def startup_event():
     log.info("Starting up...")
-    init_db(populate=False)
+    init_db()
+    # if settings.populate:
+    #     sources.populate_sources_table_from_file()
 
 
 @app.on_event("shutdown")

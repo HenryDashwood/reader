@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
 from src.backend.db.db import get_session
-from src.backend.db.SQLmodel import Update
+from src.backend.db.SQLmodel import Update, UpdateBase
 
 from .users import User, get_current_user
 
@@ -32,11 +32,10 @@ def get_last_update(*, session: Session = Depends(get_session), current_user: Us
         return "Never"
 
 
-def create_update(
-    *, session: Session = Depends(get_session), timestamp: str, current_user: User = Depends(get_current_user)
-):
+@router.post("/add", response_model=str)
+def add_update(*, session: Session = Depends(get_session), payload: UpdateBase):
     try:
-        update = Update(timestamp=timestamp)
+        update = Update(timestamp=payload.timestamp)
         session.add(update)
         session.commit()
     except Exception as e:
