@@ -15,7 +15,7 @@ router = APIRouter()
 @router.get("/", response_model=List[Update])
 def get_all_updates(
     *, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)
-) -> List:
+) -> List[Update]:
     statement = select(Update)
     results = session.exec(statement)
     return results.all()
@@ -33,8 +33,10 @@ def get_last_update(*, session: Session = Depends(get_session), current_user: Us
 
 
 @router.post("/add", response_model=Update)
-def add_update(*, session: Session = Depends(get_session), payload: UpdateBase):
+def add_update(
+    *, session: Session = Depends(get_session), payload: UpdateBase, current_user: User = Depends(get_current_user)
+) -> Update:
     update = Update(timestamp=payload.timestamp)
     session.add(update)
     session.commit()
-    return update
+    return session.exec(select(Update).where(Update.id == update.id)).first()
