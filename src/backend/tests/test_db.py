@@ -90,6 +90,7 @@ def test_create_article(session: Session, client: TestClient, auth: Dict[str, st
     assert data["published_date"] == "2021-09-26 19:36:11"
     assert data["source_id"] is not None
     assert data["id"] is not None
+    assert data["source"] is not None
     assert data["source"]["id"] is not None
     assert data["source"]["name"] == "The Way Of The Dodo"
     assert data["source"]["url"] == "https://wayofthedodo.substack.com/feed"
@@ -137,6 +138,7 @@ def test_get_all_articles(session: Session, client: TestClient, auth: Dict[str, 
     assert data[1]["published_date"] == "2021-09-26 19:36:11"
     assert data[1]["source_id"] is not None
     assert data[1]["id"] is not None
+    assert data[1]["source"] is not None
     assert data[1]["source"]["id"] is not None
     assert data[1]["source"]["name"] == "The Way Of The Dodo"
     assert data[1]["source"]["url"] == "https://wayofthedodo.substack.com/feed"
@@ -146,6 +148,7 @@ def test_get_all_articles(session: Session, client: TestClient, auth: Dict[str, 
     assert data[0]["url"] == "https://nintil.com/ai-safety/"
     assert data[0]["published_date"] == "2022-08-04 00:00:00"
     assert data[0]["source_id"] is not None
+    assert data[0]["source"] is not None
     assert data[0]["id"] is not None
     assert data[0]["source"]["id"] is not None
     assert data[0]["source"]["name"] == "Nintil"
