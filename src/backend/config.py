@@ -11,7 +11,7 @@ PROJECT_FOLDER = Path(__file__).parent.parent.parent
 
 class Settings(BaseSettings):
     algorithm: str = os.getenv("ALGORITHM", "HS256")
-    access_token_expire_minutes: os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 10080)
+    access_token_expire_minutes: int = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 10080)
     environment: str = os.getenv("ENVIRONMENT")
     populate: bool = os.getenv("POPULATE", False)
     secret_key: str = os.getenv("SECRET_KEY")
