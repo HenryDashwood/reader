@@ -35,11 +35,13 @@ function buildBackend() {
 
 function buildFrontend() {
   echo "Building frontend"
-  echo BACKEND_URL=https://api.reader.henrydashwood.com >> ~/reader/src/frontend/.env
+  dotenv_file=~/reader/src/frontend/.env
+  [ -f $dotenv_file ] && rm $dotenv_file
+  echo BACKEND_URL=https://api.reader.henrydashwood.com > $dotenv_file
   cd ~/reader/src/frontend
   rm -rf .parcel-cache dist
   npx parcel build ./*.html
-  sudo rm /var/www/reader.henrydashwood.com/*
+  sudo rm -rf /var/www/reader.henrydashwood.com/*
   sudo cp -r dist/* /var/www/reader.henrydashwood.com/
 }
 

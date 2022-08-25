@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 class Login {
   constructor(form, fields) {
     this.form = form;

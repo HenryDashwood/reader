@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const ul = document.getElementById("feeds_list");
 
 const getData = async () => {
