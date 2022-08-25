@@ -92,7 +92,6 @@ const createArticleRow = (dataElement) => {
   row.appendChild(readFlag);
 
   const source = document.createElement("p");
-  console.log(dataElement.source);
   source.appendChild(document.createTextNode(dataElement.source.name));
   source.classList.add("source");
   row.appendChild(source);
@@ -111,7 +110,6 @@ const createArticleRow = (dataElement) => {
   );
   publishedDate.classList.add("published_date");
   row.appendChild(publishedDate);
-
   return row;
 };
 
@@ -120,7 +118,6 @@ const displayData = async () => {
   username_span.innerHTML = await get_username();
   const articles = await getData();
   const latestUpdate = await getLatestUpdateTimestamp();
-  console.log(articles);
   articles.forEach((dataElement) => {
     const li = document.createElement("li");
     row = createArticleRow(dataElement);
