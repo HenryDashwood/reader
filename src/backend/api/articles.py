@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
 from src.backend.db.db import get_session
-from src.backend.db.SQLmodel import Article, ArticleCreate, ArticleGet, ArticleReadWithSource, ArticleUpdate
+from src.backend.db.SQLmodel import Article, ArticleCreate, ArticleGet, ArticleGetWithSource, ArticleUpdate
 
 from .sources import Source
 from .users import User, get_current_user
@@ -14,14 +14,14 @@ from .users import User, get_current_user
 router = APIRouter()
 
 
-@router.get("/", response_model=List[ArticleReadWithSource])
+@router.get("/", response_model=List[ArticleGetWithSource])
 def get_all_articles(
     *,
     session: Session = Depends(get_session),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
     current_user: User = Depends(get_current_user),
-) -> List[ArticleReadWithSource]:
+) -> List[ArticleGetWithSource]:
     statement = select(Article).order_by(Article.published_date.desc()).offset(offset).limit(limit)
     results = session.exec(statement).all()
     return results
@@ -54,7 +54,7 @@ def toggle_read(
     return db_article
 
 
-@router.post("/add", response_model=ArticleReadWithSource)
+@router.post("/add", response_model=ArticleGetWithSource)
 def add_article(*, session: Session = Depends(get_session), payload: ArticleCreate) -> Article:
     existing_article = session.exec(select(Article).where(Article.url == payload.url)).first()
     if existing_article:

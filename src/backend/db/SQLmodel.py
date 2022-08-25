@@ -56,7 +56,7 @@ class ArticleUpdate(SQLModel):
     read: Optional[bool] = None
 
 
-class ArticleReadWithSource(ArticleGet):
+class ArticleGetWithSource(ArticleGet):
     source: Optional[SourceRead] = None
 
 

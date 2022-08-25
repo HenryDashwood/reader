@@ -1,5 +1,4 @@
 from typing import Dict
-from urllib import response
 
 import pytest
 from fastapi.testclient import TestClient
