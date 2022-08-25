@@ -120,7 +120,7 @@ const displayData = async () => {
   const latestUpdate = await getLatestUpdateTimestamp();
   articles.forEach((dataElement) => {
     const li = document.createElement("li");
-    row = createArticleRow(dataElement);
+    const row = createArticleRow(dataElement);
     li.appendChild(row);
     ul.appendChild(li);
   });
