@@ -28,7 +28,9 @@ def get_all_sources(
 
 
 @router.get("/{source_id}", response_model=SourceRead)
-def get_source(*, session: Session = Depends(get_session), source_id: int):
+def get_source(
+    *, session: Session = Depends(get_session), current_user: User = Depends(get_current_user), source_id: int
+):
     source = session.get(Source, source_id)
     if not source:
         raise HTTPException(status_code=404, detail="Source not found")

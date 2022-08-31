@@ -28,11 +28,34 @@ def get_all_articles(
 
 
 @router.get("/{article_id}", response_model=ArticleGet)
-def get_article(*, session: Session = Depends(get_session), article_id: int):
+def get_article(
+    *, session: Session = Depends(get_session), current_user: User = Depends(get_current_user), article_id: int
+):
     article = session.get(Article, article_id)
     if not article:
         raise HTTPException(status_code=404, detail="Article not found")
     return article
+
+
+@router.post("/add", response_model=ArticleGetWithSource)
+def add_article(
+    *, session: Session = Depends(get_session), current_user: User = Depends(get_current_user), payload: ArticleCreate
+) -> Article:
+    existing_article = session.exec(select(Article).where(Article.url == payload.url)).first()
+    if existing_article:
+        return existing_article
+    source = session.exec(select(Source).where(Source.name == payload.source_name)).first()
+    source_id = source.id if source else None
+    article = Article(
+        title=payload.title,
+        url=payload.url,
+        published_date=parser.parse(payload.published_date).strftime("%Y-%m-%d %H:%M:%S"),
+        read=payload.read,
+        source_id=source_id,
+    )
+    session.add(article)
+    session.commit()
+    return session.exec(select(Article).where(Article.id == article.id)).first()
 
 
 @router.patch("/read/{id}", response_model=ArticleGet)
@@ -52,22 +75,3 @@ def toggle_read(
     session.commit()
     session.refresh(db_article)
     return db_article
-
-
-@router.post("/add", response_model=ArticleGetWithSource)
-def add_article(*, session: Session = Depends(get_session), payload: ArticleCreate) -> Article:
-    existing_article = session.exec(select(Article).where(Article.url == payload.url)).first()
-    if existing_article:
-        return existing_article
-    source = session.exec(select(Source).where(Source.name == payload.source_name)).first()
-    source_id = source.id if source else None
-    article = Article(
-        title=payload.title,
-        url=payload.url,
-        published_date=parser.parse(payload.published_date).strftime("%Y-%m-%d %H:%M:%S"),
-        read=payload.read,
-        source_id=source_id,
-    )
-    session.add(article)
-    session.commit()
-    return session.exec(select(Article).where(Article.id == article.id)).first()

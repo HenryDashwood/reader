@@ -51,12 +51,14 @@ def test_create_source(client: TestClient, auth: Dict[str, str]):
     assert data["id"] is not None
 
 
-def test_read_source(session: Session, client: TestClient):
+def test_read_source(session: Session, client: TestClient, auth: Dict[str, str]):
     source = Source(name="The Way Of The Dodo", url="https://wayofthedodo.substack.com/feed")
     session.add(source)
     session.commit()
 
-    response = client.get(f"/sources/{source.id}")
+    response = client.get(
+        f"/sources/{source.id}", headers={"Authorization": f"{auth['token_type']} {auth['access_token']}"}
+    )
     data = response.json()
 
     assert response.status_code == 200
