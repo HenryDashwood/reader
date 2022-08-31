@@ -7,7 +7,7 @@ python-dateutil
 python-dotenv
 python-jose
 python-multipart
-sqlalchemy==1.4.35
+sqlalchemy
 sqlmodel
 typer[all]
 uvicorn

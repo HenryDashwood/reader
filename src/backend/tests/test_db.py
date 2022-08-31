@@ -153,3 +153,42 @@ def test_get_all_articles(session: Session, client: TestClient, auth: Dict[str, 
     assert data[0]["source"]["name"] == "Nintil"
     assert data[0]["source"]["url"] == "https://nintil.com/rss.xml"
     assert data[0]["id"] == data[0]["source"]["id"]
+
+
+def test_toggle_article_read(session: Session, client: TestClient, auth: Dict[str, str]):
+    source = Source(name="The Way Of The Dodo", url="https://wayofthedodo.substack.com/feed")
+    session.add(source)
+    session.commit()
+    source = session.exec(select(Source).where(Source.name == source.name)).first()
+
+    article = Article(
+        title="All This Useless Beauty",
+        url="https://wayofthedodo.substack.com/p/all-this-useless-beauty",
+        published_date="2021-09-26 19:36:11",
+        read=False,
+        source_id=source.id,
+    )
+    session.add(article)
+    session.commit()
+    article = session.exec(select(Article).where(Article.url == article.url)).first()
+
+    response = client.patch(
+        f"/articles/read/{article.id}",
+        json={
+            "title": article.title,
+            "url": article.url,
+            "published_date": article.published_date,
+            "read": True,
+            "source_id": article.source_id,
+        },
+        headers={"Authorization": f"{auth['token_type']} {auth['access_token']}"},
+    )
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data["title"] == article.title
+    assert data["url"] == article.url
+    assert data["published_date"] == article.published_date
+    assert data["read"] == True
+    assert data["source_id"] == article.source_id
+    assert data["id"] == article.id
