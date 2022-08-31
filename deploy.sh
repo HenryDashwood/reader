@@ -7,6 +7,7 @@ function killport() {
 }
 
 function updateCode() {
+  echo "Pulling latest code..."
   if [ -d ~/reader ]; then
     cd ~/reader
     git pull
@@ -17,9 +18,12 @@ function updateCode() {
 }
 
 function buildBackend() {
+  echo "Building backend..."
   cd ~/reader
   ~/.pyenv/versions/3.10.5/envs/py3105/bin/python3.10 -m pip install -U pip
   ~/.pyenv/versions/3.10.5/envs/py3105/bin/python3.10 -m pip install -U -r requirements.txt
+
+  ~/.pyenv/versions/3.10.5/envs/py3105/bin/python3.10 -m pytest .
 
   PID=$(ps aux | grep 'uvicorn src.backend.main:app' | grep -v grep | awk {'print $2'} | xargs)
   if [ "$PID" != "" ]; then
@@ -29,19 +33,19 @@ function buildBackend() {
     echo "Restarting FastAPI server"
   else
     echo "No such process. Starting new FastAPI server"
-  fi
+  fi 
   nohup ~/.pyenv/versions/3.10.5/envs/py3105/bin/python3.10 -m uvicorn src.backend.main:app &
 }
 
 function buildFrontend() {
-  echo "Building frontend"
-  dotenv_file=~/reader/src/frontend/.env
-  [ -f $dotenv_file ] && rm $dotenv_file
-  echo BACKEND_URL=https://api.reader.henrydashwood.com > $dotenv_file
+  echo "Building frontend..."
   cd ~/reader/src/frontend
-  rm -rf .parcel-cache dist
+  echo "\tRemoved old frontend files"
+  sudo rm -rf node_modules .parcel-cache dist .env /var/www/reader.henrydashwood.com/*
+  echo "\tInstalling packages"
+  sudo npm install
+  echo BACKEND_URL=https://api.reader.henrydashwood.com > .env
   npx parcel build ./*.html
-  sudo rm -rf /var/www/reader.henrydashwood.com/*
   sudo cp -r dist/* /var/www/reader.henrydashwood.com/
 }
 
