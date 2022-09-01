@@ -37,14 +37,17 @@ def parse_all_feeds() -> None:
     for source in sources:
         parsed_feed = parse_feed(source["url"])
         for article in parsed_feed:
-            payload = {
-                "title": article["title"],
-                "url": article["url"],
-                "published_date": article["pub_date"],
-                "read": False,
-                "source_name": source["name"],
-            }
-            _ = httpx.post(f"{BACKEND_URL}/articles/add", json=payload)
+            _ = httpx.post(
+                f"{BACKEND_URL}/articles/add",
+                json={
+                    "title": article["title"],
+                    "url": article["url"],
+                    "published_date": article["pub_date"],
+                    "read": False,
+                    "source_name": source["name"],
+                },
+                headers={"Authorization": f"{auth['token_type']} {auth['access_token']}"},
+            )
     _ = httpx.post(
         f"{BACKEND_URL}/updates/add",
         json={"timestamp": datetime.now().strftime("%m/%d/%Y:%H:%M:%S")},
